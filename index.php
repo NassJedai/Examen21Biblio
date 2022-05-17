@@ -22,9 +22,10 @@ require 'config.php';
             <input type="password" name="mdp" placeholder="Entez votre mot de passe"required>
             <button type="submit" name='btSearch'> Connexion </button>
     </form>
+   
+    <p><a href="signin.php">S'inscrire  </p>
 
-<?php } else { ?>
-
+    <?php } else { ?>
     <p><a href="login.php">Se déconnecter </p>
     <?php } ?>
 
