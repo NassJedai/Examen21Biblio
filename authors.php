@@ -4,12 +4,14 @@ require 'config.php';
 
 // déclaration des variables 
 
-$nationalitys = [];
+$nationality = '';
+
 
 
 $link = mysqli_connect(HOSTNAME,USERNAME,PASSWORD,DATABASE); 
 
     if($link) { 
+
         //mysqli_real_query(); 
         $query = "SELECT DISTINCT nationality FROM `authors` ORDER BY nationality";
 
@@ -19,23 +21,47 @@ $link = mysqli_connect(HOSTNAME,USERNAME,PASSWORD,DATABASE);
 
             $nationalitys = [];
 
-            while(($ligne = mysqli_fetch_assoc($result)) !== null) {
+            while(($data = mysqli_fetch_row($result)) !== null) {
 
-                $nationalitys [] = $ligne;
+                $nationalitys[] = $data [0];
 
-                echo '<pre>';
-                var_dump($nationalitys);
-                echo '</pre>';
+            }
+
+
+        } mysqli_free_result($result); 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    
+    if (isset($_GET['btSearch'])) { 
+
+        $nationality = $_GET['nationality'];
+
+        $query = "SELECT firstname, lastname FROM `authors` WHERE
+         nationality='France' ORDER BY 2";
+
+        $result = mysqli_query($link, $query); 
+
+        if($result) {
+
+            $authors = [];
+
+            while(($author = mysqli_fetch_assoc($result)) !== null) {
+
+                $authors[] = $author ;
+
+                // echo '<pre>';
+                // var_dump($authors);
+                // echo '</pre>';
         }
         
-        mysqli_free_result($result); 
+            
 
 
-        mysqli_close($link);
+        } mysqli_free_result($result); 
 
-        }
+    } 
 
-    }
+} mysqli_close($link);
 ?>
 
 
@@ -46,18 +72,20 @@ $link = mysqli_connect(HOSTNAME,USERNAME,PASSWORD,DATABASE);
 
 <form action="<?= $_SERVER['PHP_SELF']?>" method="get">
 
-    <?php foreach($nationalitys as $nationality) {?>
         <select>
-            <option name="nationality"><?= $nationality ;?></option>
+            <?php foreach($nationalitys as $nationality) {?>
+                <option name="nationality"><?= $nationality ;?></option>
+            <?php } ?>
         </select>
-    <?php } ?>
+ 
         <button name="btSearch">Rechercher</button>
-
 </form>
 
     <ul>
-        <li><strong>France</strong></li>
-        <li>Honoré de Balzac</li>
+ 
+    <?php foreach($authors as $author) {?>
+        <li><?= $author['firstname']. ' ' .$author['lastname'] ;?></li>
+    <?php } ?>
     </ul>
 
 
